@@ -8,24 +8,62 @@ namespace library_automation
 {
     internal class BookDto
     {
-        string _name;
-        string _author;
-        string _status;
-        int _barrowCount;
-        int _pageCount;
+        string name;
+        string author;
+        string status;
+        int barrowCount;
+        int pageCount;
+        string givenPerson;
 
-        public BookDto(string name, string author, string status, int barrow_count, int page_count) {
-            _name = name;
-            _author = author;
-            _status = status;
-            _barrowCount = barrow_count;
-            _pageCount = page_count;
+        public BookDto() {}
+
+        public string getName() 
+        { 
+            return name;
         }
 
-        public string Name { get { return _name;} } 
-        public string Author { get { return _author;} }
-        public string Status { get { return _status;} }
-        public int BarrowCount { get { return _barrowCount; } }
-        public int PageCount { get { return _pageCount;} }
+        public string getAuthor() {
+            return author;
+        }
+
+        public string getStatus() {
+            return status;
+        }
+
+        public int getBarrowCount() { 
+            return barrowCount;
+        }
+
+        public int getPageCount() { 
+            return pageCount;
+        }
+
+        public string getGivenPerson() {
+            return givenPerson;
+        }
+
+        public void setName(string name) {
+            this.name = name;
+        }
+
+        public void setAuthor(string author) {
+            this.author = author;
+        }
+
+        public void setStatus(string status) {
+            this.status = status;
+        }
+
+        public void setBarrowCount(int barrowCount) { 
+            this.barrowCount = barrowCount;
+        }
+
+        public void setPageCount(int pageCount) {
+            this.pageCount = pageCount;
+        }
+
+        public void setGivenPerson(string givenPerson) { 
+            this.givenPerson = givenPerson;
+        }
     }
 }

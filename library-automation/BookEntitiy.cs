@@ -8,24 +8,45 @@ namespace library_automation
 {
     internal class BookEntitiy
     {
-        string _name;
-        string _author;
-        string _status;
-        int _barrowCount;
-        int _pageCount;
+        readonly string name;
+        readonly string author;
+        readonly string status;
+        readonly int barrowCount;
+        readonly int pageCount;
+        readonly string givenPerson;
 
         public BookEntitiy (string name, string author, int page_count) {
-            _name = name;
-            _author = author;
-            _status = "Müsait";
-            _barrowCount = 0;
-            _pageCount = page_count;
+            this.name = name;
+            this.author = author;
+            this.status = "Müsait";
+            this.barrowCount = 0;
+            this.pageCount = page_count;
+            this.givenPerson = "-";
         }
 
-        public string Name { get; set; }
-        public string Author { get; set; }
-        public string Status { get; set; }
-        public int BarrowCount { get; set; }
-        public int PageCount { get; set; }
+        public string getName() { 
+            return name;
+        }
+
+        public string getAuthor()
+        {
+            return author;
+        }
+
+        public string getStatus() { 
+            return status;
+        }
+
+        public int getBarrowCount() { 
+            return barrowCount;
+        }
+
+        public int getPageCount() { 
+            return pageCount;
+        }
+
+        public string getGivenPerson() { 
+            return givenPerson;
+        }
     }
 }

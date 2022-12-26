@@ -14,7 +14,8 @@ namespace library_automation
 
         public Repository() 
         {
-            connecetion_string = "Data Source = DESKTOP-IIUB1PA;Initial Catalog=library;Integrated Security=true";
+            //MultipleActiveResultSets=true;
+            connecetion_string = "Data Source = localhost;Initial Catalog=library;Integrated Security=true;User Id=sa;Password=1;";
             connection = new SqlConnection(connecetion_string);
         }
 
@@ -23,66 +24,95 @@ namespace library_automation
             connection.Open();
         }
 
-        public void Disconnect()
+        public async void Disconnect()
         {
-            connection.Close();
+            await connection.CloseAsync();
         }
 
         public List<BookDto> GetAll()
         {
-            Connect();
             List<BookDto> books = new List<BookDto>();
             string query = "SELECT * FROM books";
             SqlCommand cmd = new SqlCommand(query, connection);
+            cmd.Connection.Open();
             SqlDataReader reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                BookDto book = new BookDto(
-                    (string)reader.GetValue(0),
-                    (string)reader.GetValue(1),
-                    (string)reader.GetValue(2),
-                    (int)reader.GetValue(3),
-                    (int)reader.GetValue(4)
-                    );
+                BookDto book = new BookDto();
+                book.setName((string)reader.GetValue(0));
+                book.setAuthor((string)reader.GetValue(1));
+                book.setStatus((string)reader.GetValue(2));
+                book.setBarrowCount((int)reader.GetValue(3));
+                book.setPageCount((int)reader.GetValue(4));
+                book.setGivenPerson((string)reader.GetValue(5));
                 books.Add(book);
             }
-            Disconnect();
+            cmd.Connection.Close();
             return books;
         }
 
         public bool AddBook(BookEntitiy book)
         {
-            Connect();
-            List<BookDto> bookByName = GetBookByName(book.Name);
-
-            if (bookByName.Count == 0) 
+            BookDto bookByName = GetBookByName(book.getName());
+            if (bookByName.getName() == null) 
             {
-                string query = "INSERT INTO books (id, name, author, status, barrow_count) VALUES ('"
-               + book.Name
-               + "', '"
-               + book.Author
-               + "', '"
-               + book.Status
-               + "', "
-               + book.BarrowCount + ")";
-                SqlCommand cmd = new SqlCommand(query, connection);
-                cmd.ExecuteNonQuery();
+                string query = "EXEC add_book "
+                    + "'" + book.getName() + "',"
+                    + "'" + book.getAuthor() + "',"
+                    + "'" + book.getStatus() + "',"
+                    + "" + book.getBarrowCount() + ","
+                    + "'-',"
+                    + "" + book.getPageCount() + "";
 
-                Disconnect();
+                SqlCommand cmd = new SqlCommand(query, connection);
+                cmd.Connection.Open();
+                cmd.ExecuteNonQuery();
+                cmd.Connection.Close();
                 return true;
             }
 
-            Disconnect();
             return false;
             
         }
 
-        public void DeleteBook()
+        public bool DeleteBook(string name)
         {
+            string query = "DELETE FROM books WHERE name='" + name + "'";
+            SqlCommand cmd = new SqlCommand(query, connection);
+            try
+            {
+                cmd.Connection.Open();
+                cmd.ExecuteNonQuery();
+                cmd.Connection.Close();
+                return true;
+            }
+            catch {
+                return false;
+            }
         }
 
-        public void UpdateBook()
+        public bool UpdateBook()
         {
+            //string query = "EXEC update_book "
+            //    + "'" + book.getName() + "',"
+            //    + "'" + book.getAuthor() + "',"
+            //    + "'" + book.getStatus() + "',"
+            //    + "" + book.getBarrowCount() + ","
+            //    + "'-',"
+            //    + "" + book.getPageCount() + "";
+            string query = "";
+            SqlCommand cmd = new SqlCommand(query, connection);
+            try
+            {
+                cmd.Connection.Open();
+                cmd.ExecuteNonQuery();
+                cmd.Connection.Close();
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public void ShowOnlyAvailables()
@@ -93,32 +123,23 @@ namespace library_automation
         {
         }
 
-        public List<BookDto> GetBookByName(string name) {
-            Connect();
-            List<BookDto> books = new List<BookDto>();
+        public BookDto GetBookByName(string name) {
+            BookDto book = new BookDto();
+            string query = "SELECT * FROM books WHERE name='" + name + "'";
+            SqlCommand cmd = new SqlCommand(query, connection);
             try
             {
-                string query = "SELECT * FROM books WHERE name='" + name + "'";
-                SqlCommand cmd = new SqlCommand(query, connection);
+                cmd.Connection.Open();
                 SqlDataReader reader = cmd.ExecuteReader();
                 reader.Read();
-                BookDto book = new BookDto(
-                    (string)reader.GetValue(0),
-                    (string)reader.GetValue(1),
-                    (string)reader.GetValue(2),
-                    (int)reader.GetValue(3),
-                    (int)reader.GetValue(4)
-                    );
-                books.Add(book);
-
-                Disconnect();
-                return books;
+                book.setName((string)reader.GetValue(0));
+                cmd.Connection.Close();
+                return book;
             }
             catch {
-                Disconnect();
-                return books;
+                cmd.Connection.Close();
+                return book;
             }
-            
         }
 
     }
